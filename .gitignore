@@ -1,1 +1,3 @@
 Sinkhorn_journal/
+# Ignore temporary or local config files
+*.asv
