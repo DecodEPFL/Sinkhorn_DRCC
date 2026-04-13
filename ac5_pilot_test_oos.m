@@ -13,7 +13,7 @@ cfg.mode = 'full';
 cfg.rho_list = [];
 cfg.python_cmd = '';
 cfg.python_script = 'generate_adversarial_batch.py';
-cfg.rho_scales = [1.05];
+cfg.rho_scales = [1.1];
 cfg.dist_repo_name = 'testing_distributions_rho105';
 
 switch lower(cfg.mode)
@@ -181,7 +181,7 @@ for ir = 1:numel(cfg.rho_list)
                 m.mean_cost, m.violation_rate, ...
                 'VariableNames', {'rho_train','eps_ablation','seed','controller','eps_train','mean_cost','violation_rate'});
 
-            results = [results; row]; %#ok<AGROW>
+            results = [results; row];
         end
     end
 end
@@ -317,7 +317,7 @@ function out = summarize_best_sinkhorn(results)
                 'nominal_cost_minus_sinkhorn', ...
                 'nominal_violation_minus_sinkhorn'});
 
-        out = [out; row]; %#ok<AGROW>
+        out = [out; row];
     end
 end
 
@@ -325,12 +325,12 @@ function py_cmd = resolve_python_command(user_cmd)
     candidates = {};
 
     if ~isempty(user_cmd)
-        candidates{end+1} = user_cmd; %#ok<AGROW>
+        candidates{end+1} = user_cmd;
     end
 
     env_python = getenv('PYTHON_BIN');
     if ~isempty(env_python)
-        candidates{end+1} = env_python; %#ok<AGROW>
+        candidates{end+1} = env_python;
     end
 
     candidates{end+1} = 'python3';
