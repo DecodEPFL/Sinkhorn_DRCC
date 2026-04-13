@@ -20,7 +20,25 @@ theta = directQCQP(Q, data, rho);
 
 %% Computations
 figure;
+t = tiledlayout(2,2,'TileSpacing','compact','Padding','compact');
+nexttile;
+h1 = plot(data(:,1), data(:,2), 'ro', 'MarkerFaceColor', 'r', 'DisplayName', 'Support points (nominal distribution)');
+hold on;
+h2 = plot(data(:, 1) + theta(1:2) , data(:, 2) + theta(3:4), 'bo', 'MarkerFaceColor', 'b', 'DisplayName', 'Support points (worst-case Wasserstein distribution)');
+% legend('show', 'Orientation','vertical', ...
+%     'Box','off');
+% legend([h1, h2], {'Support points (nominal distribution)', 'Support points (worst-case distribution)'}, 'Location', 'best');
+grid on;
+% Draw arrow using quiver
+quiver(data(1, 1), data(2, 1), theta(1), theta(2), 0, 'MaxHeadSize', 0.3, 'Color', 'k', 'LineWidth', 1, 'HandleVisibility', 'off');
+quiver(data(1, 2), data(2, 2), theta(3), theta(4), 0, 'MaxHeadSize', 0.3, 'Color', 'k', 'LineWidth', 1, 'HandleVisibility', 'off');
+
+axis([0 2 0 2]);
+set(gca, 'Color', [0.95 0.95 0.95])
+title('Worst-case transport mapping for W-DRO', 'Interpreter', 'latex');
+set(gcf, 'Color', [1 1 1])
 for i=1:size(epsilons, 2)
+    nexttile;
     epsilon = epsilons(i);
     a = lam_min; b = lam_max;
     interval = b - a;
@@ -67,57 +85,36 @@ for i=1:size(epsilons, 2)
     density_vals = reshape(density_vals, grid_size, grid_size);
     
     % Plot
-    subplot(2, 2, i+1);
-    contourf(Z1, Z2, density_vals, 8, 'LineColor', 'none');
+    % legend(data, {'Support points (nominal distribution)'}, 'Location', 'best');
+    contourf(Z1, Z2, density_vals, 8, 'LineColor', 'none', 'HandleVisibility', 'off');
     % colorbar;
     hold on;
-    plot(data(:,1), data(:,2), 'ro', 'MarkerFaceColor', 'r')
+    plot(data(:,1), data(:,2), 'ro', 'MarkerFaceColor', 'r', 'DisplayName', 'Support (nominal distribution)');
+    % legend('show', 'Location', 'best');
     % plot(data(:, 1) + theta(1:2) , data(:, 2) + theta(3:4), 'bo', 'MarkerFaceColor', 'b')
     % xlabel('$z_1$', 'Interpreter', 'latex');
     % ylabel('$z_2$', 'Interpreter', 'latex');
     title(['Worst-case distribution for S-DRO $(\epsilon =\, $' num2str(epsilon) '$)$'], 'Interpreter', 'latex');
     colormap('sky');  
 end
-%%
-
-subplot(2, 2, 1);
-h1 = plot(data(:,1), data(:,2), 'ro', 'MarkerFaceColor', 'r');
-hold on;
-h2 = plot(data(:, 1) + theta(1:2) , data(:, 2) + theta(3:4), 'bo', 'MarkerFaceColor', 'b');
-
-% legend([h1, h2], {'Support points (nominal distribution)', 'Support points (worst-case distribution)'}, 'Location', 'best');
-grid on;
-% Draw arrow using quiver
-quiver(data(1, 1), data(2, 1), theta(1), theta(2), 0, 'MaxHeadSize', 0.3, 'Color', 'k', 'LineWidth', 1, 'HandleVisibility', 'off');
-quiver(data(1, 2), data(2, 2), theta(3), theta(4), 0, 'MaxHeadSize', 0.3, 'Color', 'k', 'LineWidth', 1, 'HandleVisibility', 'off');
-
-axis([0 2 0 2]);
-set(gca, 'Color', [0.95 0.95 0.95])
-title('Worst-case transport mapping for W-DRO', 'Interpreter', 'latex');
-set(gcf, 'Color', [1 1 1])
+% Create a common legend attached to the tiledlayout
+% lgd = legend(t, [h1 h2], ...
+%     'Orientation','vertical', ...
+%     'Location','southoutside', ...
+%     'Box','off');
+% lgd.FontSize = 9;
+leg = legend([h1 h2], 'Orientation', 'horizontal');
+leg.Layout.Tile = 'south';
 
 set(gcf, 'Units', 'centimeters');
 afFigurePosition = [1 1 20 14]; % [pos_x pos_y width_x width_y]
 set(gcf, 'Position', afFigurePosition); % [left bottom width height]
 set(gcf, 'PaperPositionMode', 'auto');
 
-% Example dummy handles for legend entries
-hold on
-h1 = plot(NaN,NaN,'ro','MarkerFaceColor','r'); % Nominal
-h2 = plot(NaN,NaN,'bo','MarkerFaceColor','b'); % W-DRO support
 
-% Place legend outside all subplots
-lgd = legend([h1 h2], ...
-    {'Support points (nominal distribution)', ...
-     'Support points (Wasserstein worst-case distribution)'}, ...
-     'Orientation','horizontal','Location','southoutside');
-
-% Position legend
-% lgd.Position = 'bestoutside';
-
-% set(gca, 'Units','normalized',... %
-% 'Position',[0.15 0.2 0.75 0.7]);
-% exportgraphics(gcf, 'Sinkhorn_worst_case.pdf', 'ContentType', 'vector');
+set(gca, 'Units','normalized',... %
+'Position',[0.15 0.2 0.75 0.7]);
+exportgraphics(gcf, 'Sinkhorn_worst_case.pdf', 'ContentType', 'vector');
 
 %% Functions (Gaussian reference)
 function cost = helperFunction(lambda, Q, rho, epsilon, data)
