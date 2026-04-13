@@ -1,0 +1,14 @@
+# Core numerical stack
+numpy>=1.23
+scipy>=1.10
+pandas>=1.5
+
+# Plotting
+matplotlib>=3.7
+seaborn>=0.12
+
+# Optimal transport (imported as: import ot)
+POT>=0.9
+
+# Optimization (used in Wasserstein_empirical.py)
+cvxpy>=1.3
